@@ -1,20 +1,36 @@
-import { Controller, Post, Body, Get, NotFoundException, InternalServerErrorException, HttpStatus, HttpCode, NotAcceptableException, Param, Put, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  NotFoundException,
+  InternalServerErrorException,
+  HttpStatus,
+  HttpCode,
+  NotAcceptableException,
+  Param,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schema/user.schema';
 import { CreateUserDto } from './dto/user.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Create user' })
   @HttpCode(HttpStatus.CREATED)
   async createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
     const { email } = createUserDto;
     const existingUser = await this.userService.findUserByEmail(email);
 
     if (existingUser) {
-      throw new NotAcceptableException("this user already exists");
+      throw new NotAcceptableException('this user already exists');
     } else {
       try {
         const user = await this.userService.createUser(createUserDto);
@@ -26,6 +42,7 @@ export class UserController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get all users' })
   async getUsers(): Promise<User[]> {
     try {
       const users = await this.userService.getUsers();
@@ -39,6 +56,7 @@ export class UserController {
   }
 
   @Get(':userId')
+  @ApiOperation({ summary: 'Get user by id' })
   async getUserById(@Param('userId') userId: string): Promise<User> {
     const user = await this.userService.getUserById(userId);
     if (!user) {
@@ -48,13 +66,20 @@ export class UserController {
   }
 
   @Put(':userId')
-  async updateUser(@Param('userId') userId: string, @Body() updateUserDto: CreateUserDto): Promise<User> {
+  @ApiOperation({ summary: 'Change user by id' })
+  async updateUser(
+    @Param('userId') userId: string,
+    @Body() updateUserDto: CreateUserDto,
+  ): Promise<User> {
     const existingUser = await this.userService.getUserById(userId);
     if (!existingUser) {
       throw new NotFoundException('User not found');
     } else {
       try {
-        const updatedUser = await this.userService.updateUser(userId, updateUserDto);
+        const updatedUser = await this.userService.updateUser(
+          userId,
+          updateUserDto,
+        );
         return updatedUser;
       } catch (error) {
         throw new InternalServerErrorException('Failed to update user');
@@ -63,6 +88,7 @@ export class UserController {
   }
 
   @Delete(':userId')
+  @ApiOperation({ summary: 'Delete user by id' })
   async deleteUser(@Param('userId') userId: string): Promise<void> {
     const existingUser = await this.userService.getUserById(userId);
     if (!existingUser) {

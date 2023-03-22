@@ -9,15 +9,24 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
+import {
+    ApiOperation,
+    ApiResponse,
+    ApiTags,
+  } from '@nestjs/swagger';
 import { Process } from './schema/process.schema';
 import { ProcessService } from './process.service';
 import { CreateProcessDto } from './dto/process.dto';
 
+@ApiTags('processes')
 @Controller('processes')
 export class ProcessController {
   constructor(private readonly processService: ProcessService) {}
 
+
   @Post()
+  @ApiOperation({ summary: 'Create process' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
   async create(@Body() createProcessDto: CreateProcessDto) {
     const process = new Process(createProcessDto);
     try {
@@ -28,6 +37,12 @@ export class ProcessController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Get a list of all Processes' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the process with stats',
+    type: [Process],
+  })
   async findAll() {
     try {
       return await this.processService.findAll();
@@ -37,6 +52,7 @@ export class ProcessController {
   }
 
   @Get('overview')
+  @ApiOperation({ summary: 'Get the total number of processes and the amount of dangerLevels' })
   async getOverview() {
     try {
         return this.processService.getDangerLevelStats();
@@ -46,6 +62,7 @@ export class ProcessController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get process by id' })
   async findOne(@Param('id') id: string) {
     try {
       const process = await this.processService.findOne(id);
@@ -59,6 +76,7 @@ export class ProcessController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Change process by id' })
   async update(
     @Param('id') id: string,
     @Body() updateProcessDto: CreateProcessDto,
@@ -76,6 +94,7 @@ export class ProcessController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete process by id' })
   async remove(@Param('id') id: string) {
     try {
       const process = await this.processService.findOne(id);
