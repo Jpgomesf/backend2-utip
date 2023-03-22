@@ -8,6 +8,8 @@ import {
   Param,
   NotFoundException,
   BadRequestException,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
     ApiOperation,
@@ -27,8 +29,9 @@ export class ProcessController {
   @Post()
   @ApiOperation({ summary: 'Create process' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @UsePipes(new ValidationPipe({ whitelist: true }))
   async create(@Body() createProcessDto: CreateProcessDto) {
-    const process = new Process(createProcessDto);
+    const process = createProcessDto;
     try {
       return await this.processService.create(process);
     } catch (e: any) {
