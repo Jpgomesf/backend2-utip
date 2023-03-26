@@ -13,6 +13,10 @@ export class UserService {
     return this.userModel.findOne({ email }).exec();
   }
 
+  async findUserById(_id: string): Promise<User | null> {
+    return this.userModel.findById(_id).exec();
+  }
+
   async createUser(createUserDto: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
     const user = new this.userModel({
@@ -35,7 +39,8 @@ export class UserService {
   }
 
   async updateUser(userId: string, updateUserDto: CreateUserDto): Promise<User> {
-    const updatedUser = await this.userModel.findByIdAndUpdate(
+    const updatedUser = await this.userModel
+    .findByIdAndUpdate(
       userId,
       {
         $set: updateUserDto,
@@ -44,7 +49,8 @@ export class UserService {
         new: true,
         runValidators: true,
       },
-    ).exec();
+    )
+    .exec();
 
     if (!updatedUser) {
       throw new NotFoundException('User not found');
