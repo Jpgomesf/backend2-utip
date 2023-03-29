@@ -110,7 +110,7 @@ export class ProcessService {
         }
         break;
       case 'sen':
-        return null;
+        return 'completed';
     }
     return null;
   }
