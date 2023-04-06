@@ -20,6 +20,9 @@ export class Process extends Document {
   @Prop({ required: [true, 'Status is required'], trim: true })
   status: string;
 
+  @Prop()
+  dateStatusUpdated: Date;
+
   @ApiProperty({
     example: '555-1234',
     description: 'The phone number of the defendant or attorney',

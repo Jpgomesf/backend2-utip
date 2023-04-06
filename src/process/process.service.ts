@@ -40,11 +40,16 @@ export class ProcessService {
 
   async update(
     id: string,
-    createProcessDto: CreateProcessDto,
+    updateProcessDto: CreateProcessDto,
   ): Promise<Process> {
-    return this.processModel
-      .findByIdAndUpdate(id, createProcessDto, { new: true })
-      .exec();
+    const process = await this.processModel.findById(id);
+    // Check if the status has been changed
+    if (updateProcessDto.status && updateProcessDto.status !== process.status) {
+      process.dateStatusUpdated = new Date(); // Set the dateStatusUpdated to the current date/time
+    }
+
+    Object.assign(process, updateProcessDto);
+    return process.save();
   }
 
   async remove(id: string): Promise<Process> {
@@ -54,58 +59,68 @@ export class ProcessService {
   private formatProcess(process: Process): any {
     const createdAt = process.get('createdAt');
     const updatedAt = process.get('updatedAt');
-    const daysSinceCreated = Math.round((Date.now() - createdAt.getTime()) / (1000 * 3600 * 24));
-    const daysSinceUpdated = Math.round((Date.now() - updatedAt.getTime()) / (1000 * 3600 * 24));
+    const statusDateUpdated = process.get('dateStatusUpdated');
+    const daysSinceCreated = Math.round(
+      (Date.now() - createdAt.getTime()) / (1000 * 3600 * 24),
+    );
+    const daysSinceUpdated = Math.round(
+      (Date.now() - updatedAt.getTime()) / (1000 * 3600 * 24),
+    );
+    const daysSinceStatusUpdated = Math.round(
+      (Date.now() - statusDateUpdated.getTime()) / (1000 * 3600 * 24),
+    );
     const dangerLevel = this.getDangerLevel(process);
     return {
       ...process.toJSON(),
       daysSinceCreated,
       daysSinceUpdated,
-      daysCounter: createdAt === updatedAt ? daysSinceCreated : daysSinceUpdated,
+      daysSinceStatusUpdated,
+      daysCounter:
+        daysSinceStatusUpdated,
       dangerLevel,
     };
   }
 
   private getDangerLevel(process: Process): any {
     const status = process.get('status');
-    const createdAt = process.get('createdAt');
-    const updatedAt = process.get('updatedAt');
-    const daysSinceCreated = Math.round((Date.now() - createdAt.getTime()) / (1000 * 3600 * 24));
-    const daysSinceUpdated = Math.round((Date.now() - updatedAt.getTime()) / (1000 * 3600 * 24));
+    const statusDateUpdated = process.get('dateStatusUpdated');
+    const daysSinceStatusUpdated = Math.round(
+      (Date.now() - statusDateUpdated.getTime()) / (1000 * 3600 * 24),
+    );
     switch (status) {
       case 'inq':
-        if (daysSinceUpdated <= 30) {
+        if (daysSinceStatusUpdated <= 30) {
           return 'ok';
-        } else if (daysSinceUpdated <= 45) {
+        } else if (daysSinceStatusUpdated <= 45) {
           return 'warning';
-        } else if (daysSinceUpdated > 45) {
+        } else if (daysSinceStatusUpdated > 45) {
           return 'danger';
         }
         break;
       case 'den':
-        if (daysSinceUpdated <= 10) {
+        if (daysSinceStatusUpdated <= 10) {
           return 'ok';
-        } else if (daysSinceUpdated <= 15) {
+        } else if (daysSinceStatusUpdated <= 15) {
           return 'warning';
-        } else if (daysSinceUpdated > 15) {
+        } else if (daysSinceStatusUpdated > 15) {
           return 'danger';
         }
         break;
       case 'def':
-        if (daysSinceUpdated <= 5) {
+        if (daysSinceStatusUpdated <= 5) {
           return 'ok';
-        } else if (daysSinceUpdated <= 8) {
+        } else if (daysSinceStatusUpdated <= 8) {
           return 'warning';
-        } else if (daysSinceUpdated > 8) {
+        } else if (daysSinceStatusUpdated > 8) {
           return 'danger';
         }
         break;
       case 'aij':
-        if (daysSinceUpdated <= 25) {
+        if (daysSinceStatusUpdated <= 25) {
           return 'ok';
-        } else if (daysSinceUpdated <= 30) {
+        } else if (daysSinceStatusUpdated <= 30) {
           return 'warning';
-        } else if (daysSinceUpdated > 30) {
+        } else if (daysSinceStatusUpdated > 30) {
           return 'danger';
         }
         break;
@@ -114,5 +129,4 @@ export class ProcessService {
     }
     return null;
   }
-
 }

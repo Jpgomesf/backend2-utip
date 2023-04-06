@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional, IsPhoneNumber, IsString } from 'class-validator';
+import { IsDate, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
 
 export class CreateProcessDto {
   @ApiProperty({ example: 112313123, description: 'process number' })
@@ -17,6 +17,10 @@ export class CreateProcessDto {
   @ApiProperty({ example: 'inq', description: 'status' })
   @IsString()
   status: string;
+
+  @IsOptional()
+  @IsDate()
+  dateStatusUpdated: Date;
 
   @ApiProperty({ example: '(32) 9923123123', description: 'phone number' })
   @IsOptional()

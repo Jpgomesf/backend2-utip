@@ -11,11 +11,7 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import {
-    ApiOperation,
-    ApiResponse,
-    ApiTags,
-  } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Process } from './schema/process.schema';
 import { ProcessService } from './process.service';
 import { CreateProcessDto } from './dto/process.dto';
@@ -25,13 +21,12 @@ import { CreateProcessDto } from './dto/process.dto';
 export class ProcessController {
   constructor(private readonly processService: ProcessService) {}
 
-
   @Post()
   @ApiOperation({ summary: 'Create process' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async create(@Body() createProcessDto: CreateProcessDto) {
-    const process = createProcessDto;
+    const process = { ...createProcessDto, dateStatusUpdated: new Date() };
     try {
       return await this.processService.create(process);
     } catch (e: any) {
@@ -55,13 +50,15 @@ export class ProcessController {
   }
 
   @Get('overview')
-  @ApiOperation({ summary: 'Get the total number of processes and the amount of dangerLevels' })
+  @ApiOperation({
+    summary: 'Get the total number of processes and the amount of dangerLevels',
+  })
   async getOverview() {
     try {
-        return this.processService.getDangerLevelStats();
-      } catch (e: any) {
-        throw new BadRequestException(e.message);
-      }
+      return this.processService.getDangerLevelStats();
+    } catch (e: any) {
+      throw new BadRequestException(e.message);
+    }
   }
 
   @Get(':id')
@@ -85,12 +82,8 @@ export class ProcessController {
     @Body() updateProcessDto: CreateProcessDto,
   ) {
     try {
-      const process = await this.processService.findOne(id);
-      if (!process) {
-        throw new NotFoundException('Process not found');
-      }
-      Object.assign(process, updateProcessDto);
-      return process.save();
+      const process = await this.processService.update(id, updateProcessDto);
+      return process;
     } catch (e: any) {
       throw new BadRequestException(e.message);
     }
