@@ -75,8 +75,7 @@ export class ProcessService {
       daysSinceCreated,
       daysSinceUpdated,
       daysSinceStatusUpdated,
-      daysCounter:
-        daysSinceStatusUpdated,
+      daysCounter: daysSinceStatusUpdated,
       dangerLevel,
     };
   }
