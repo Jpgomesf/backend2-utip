@@ -46,11 +46,14 @@ export class UserController {
   async getUsers(): Promise<User[]> {
     try {
       const users = await this.userService.getUsers();
-      if (users.length === 0) {
+      if (!users.length) {
         throw new NotFoundException('No users found');
       }
       return users;
     } catch (error) {
+      if (error.message === 'No users found') {
+        throw new NotFoundException('No users found');
+      }
       throw new InternalServerErrorException('Failed to get users');
     }
   }
