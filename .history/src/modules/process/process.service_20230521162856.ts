@@ -19,7 +19,7 @@ export class ProcessService {
     return processes.map((process) => this.formatProcess(process))
   }
 
-  async getProcessesAnalitycs(): Promise<IProcessAnalitycs> {
+  async getProcessesAnalitycs() {
     const processCounts: Record<ProcessStatusTypeEnum, number> = {
       [ProcessStatusTypeEnum.Ok]: 0,
       [ProcessStatusTypeEnum.Warning]: 0,
@@ -42,7 +42,6 @@ export class ProcessService {
       delivered: processCounts[ProcessStatusTypeEnum.Delivered],
       total: total,
     }
-    return analitycs
   }
 
   async findOne(id: string): Promise<IProcess>  {

@@ -35,7 +35,5 @@ export const SProcessAnalitycs = z.object({
     danger: z.number(),
     hold: z.number(),
     delivered: z.number(),
-    total: z.number(),
+   total: z.number(),
 })
-
-export type IProcessAnalitycs = z.infer<typeof SProcessAnalitycs>
