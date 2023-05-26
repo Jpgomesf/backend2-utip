@@ -84,7 +84,7 @@ export class ProcessController {
     @Body() updateProcessDto: IProcess,
   ) {
     try {
-     return await this.processService.update(id, updateProcessDto)
+     return await this.processService.update(id, SProcess.parse(updateProcessDto))
     } catch (error) {
       throw new BadRequestException(error.message)
     }
