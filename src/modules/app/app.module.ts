@@ -6,7 +6,7 @@ import { UserModule } from '../user/user.module'
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017/uti-processual'),
+    MongooseModule.forRoot('mongodb+srv://jpgomesf:8tMfchBzh24mpcU@uti-processual.2xgklbr.mongodb.net/?retryWrites=true&w=majority'),
     ProcessModule,
     AuthModule,
     UserModule,
