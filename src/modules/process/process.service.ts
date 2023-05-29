@@ -52,8 +52,7 @@ export class ProcessService {
 
   async update(id: string, updateProcessDto: IProcess) {
     const process = await this.processModel
-      .findByIdAndUpdate(id, updateProcessDto, { new: true })
-      .exec()
+      .findByIdAndUpdate(id, updateProcessDto, { new: true }).lean().exec()
 
     if (updateProcessDto.status && updateProcessDto.status !== process.status) {
       process.dateStepUpdate = new Date()

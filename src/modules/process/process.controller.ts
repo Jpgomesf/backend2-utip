@@ -14,7 +14,7 @@ import {
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Process } from '../../common/schemas/process.schema'
 import { ProcessService } from './process.service'
-import { IProcess, SProcess } from '../../common'
+import { IProcess, SProcess, DSProcess, DIProcess } from '../../common'
 
 @ApiTags('processes')
 @Controller('processes')
@@ -81,10 +81,11 @@ export class ProcessController {
   @ApiOperation({ summary: 'Update process by id' })
   async update(
     @Param('id') id: string,
-    @Body() updateProcessDto: IProcess,
+    @Body() updateProcessDto: DIProcess,
   ) {
     try {
-     return await this.processService.update(id, SProcess.parse(updateProcessDto))
+      console.log(id, updateProcessDto);
+     return await this.processService.update(id, DSProcess.parse(updateProcessDto))
     } catch (error) {
       throw new BadRequestException(error.message)
     }
