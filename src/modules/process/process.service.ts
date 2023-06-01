@@ -51,15 +51,16 @@ export class ProcessService {
   }
 
   async update(id: string, updateProcessDto: IProcess) {
-    const process = await this.processModel
-      .findByIdAndUpdate(id, updateProcessDto, { new: true }).lean().exec()
+    const process = await this.processModel.findById(id).lean().exec();
 
-    if (updateProcessDto.status && updateProcessDto.status !== process.status) {
-      process.dateStepUpdate = new Date()
-      process.save()
+    if (updateProcessDto.steps && updateProcessDto.steps !== process.steps) {
+      updateProcessDto.dateStepUpdate = new Date();
     }
 
-    return process
+    const updatedProcess = await this.processModel
+      .findByIdAndUpdate(id, updateProcessDto, { new: true }).lean().exec();
+
+    return updatedProcess;
   }
 
   async remove(id: string): Promise<Process> {
