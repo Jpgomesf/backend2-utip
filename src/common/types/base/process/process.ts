@@ -9,6 +9,11 @@ export enum ProcessStepsTypeEnum {
     Finalizado = 'finalizado',
 }
 
+export enum ProcessAttorneyTypeEnum {
+    Private = 'advogado-constituido',
+    Public = 'defensoria-publica'
+}
+
 export enum ProcessStatusTypeEnum  {
     Ok = 'ok',
     Warning = 'warning',
@@ -21,7 +26,7 @@ export const SProcess = z.object({
     steps: z.nativeEnum(ProcessStepsTypeEnum),
     status: z.nativeEnum(ProcessStatusTypeEnum).default(ProcessStatusTypeEnum.Ok),
     processNumber: z.string().max(30),
-    attorneyName: z.string().optional().nullable(),
+    attorneyType: z.nativeEnum(ProcessAttorneyTypeEnum),
     defendantName: z.string().optional().nullable(),
     description: z.string().optional().nullable(),
     dateStepUpdate: z.date(),
