@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { ApiProperty } from '@nestjs/swagger'
 import { Document } from 'mongoose'
-import { ProcessStatusTypeEnum, ProcessStepsTypeEnum } from '../types'
+import { ProcessStatusTypeEnum, ProcessStepsTypeEnum, ProcessAttorneyTypeEnum } from '../types'
 
 @Schema({ timestamps: true })
 export class Process extends Document {
@@ -17,8 +17,8 @@ export class Process extends Document {
   processNumber: string
   
   @ApiProperty({ example: 'Jane Smith', description: 'The attorney name' })
-  @Prop({ trim: true })
-  attorneyName: string
+  @Prop({ enum: ProcessAttorneyTypeEnum, default: ProcessAttorneyTypeEnum.Public })
+  attorneyType: ProcessAttorneyTypeEnum
 
   @ApiProperty({ example: 'John Doe', description: 'The defendant name' })
   @Prop({ trim: true })
