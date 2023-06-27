@@ -19,14 +19,14 @@ import { IProcess, SProcess, DSProcess, DIProcess } from '../../common'
 @ApiTags('processes')
 @Controller('processes')
 export class ProcessController {
-  constructor(private readonly processService: ProcessService) {}
+  constructor(private readonly processService: ProcessService) { }
 
   @Post('/create')
   @ApiOperation({ summary: 'Create process' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async create(@Body() process: IProcess) {
-    const newProcess = { ...process, dateStepUpdate: new Date() }
+    const newProcess = { ...process, dateStepUpdate: process.dateStepUpdate ? new Date(process.dateStepUpdate) : new Date() }
     console.log()
     try {
       const validatedProcess = SProcess.parse(newProcess)
@@ -85,7 +85,7 @@ export class ProcessController {
   ) {
     try {
       console.log(id, updateProcessDto);
-     return await this.processService.update(id, DSProcess.parse(updateProcessDto))
+      return await this.processService.update(id, DSProcess.parse(updateProcessDto))
     } catch (error) {
       throw new BadRequestException(error.message)
     }
