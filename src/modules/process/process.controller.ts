@@ -19,15 +19,18 @@ import { IProcess, SProcess, DSProcess, DIProcess } from '../../common'
 @ApiTags('processes')
 @Controller('processes')
 export class ProcessController {
-  constructor(private readonly processService: ProcessService) { }
+  constructor(private readonly processService: ProcessService) {}
 
   @Post('/create')
   @ApiOperation({ summary: 'Create process' })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   @UsePipes(new ValidationPipe({ whitelist: true }))
   async create(@Body() process: IProcess) {
-    const newProcess = { ...process, dateStepUpdate: process.dateStepUpdate ? new Date(process.dateStepUpdate) : new Date() }
-    console.log()
+    const newProcess = {
+      ...process,
+      dateStepUpdate: this.processService.toDate(process.dateStepUpdate),
+      incarcerationDate: this.processService.toDate(process.dateStepUpdate),
+    }
     try {
       const validatedProcess = SProcess.parse(newProcess)
       return await this.processService.create(validatedProcess)
@@ -79,13 +82,12 @@ export class ProcessController {
 
   @Put(':id')
   @ApiOperation({ summary: 'Update process by id' })
-  async update(
-    @Param('id') id: string,
-    @Body() updateProcessDto: DIProcess,
-  ) {
+  async update(@Param('id') id: string, @Body() updateProcessDto: DIProcess) {
     try {
-      console.log(id, updateProcessDto);
-      return await this.processService.update(id, DSProcess.parse(updateProcessDto))
+      return await this.processService.update(
+        id,
+        DSProcess.parse(updateProcessDto),
+      )
     } catch (error) {
       throw new BadRequestException(error.message)
     }
