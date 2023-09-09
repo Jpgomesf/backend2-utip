@@ -77,12 +77,22 @@ export class ProcessService {
     return this.processModel.findByIdAndRemove(id).exec()
   }
 
+  calculateDaysDifference(date: Date): number {
+    return Math.round((Date.now() - date.getTime()) / (1000 * 3600 * 24))
+  }
+
   private formatProcess(process: IProcess) {
-    const daysSinceStepUpdate = Math.round(
-      (Date.now() - process.dateStepUpdate.getTime()) / (1000 * 3600 * 24),
+    const daysSinceStepUpdate = this.calculateDaysDifference(
+      process.dateStepUpdate,
     )
+
+    const incarcerationDaysCount = this.calculateDaysDifference(
+      process.incarcerationDate,
+    )
+
     process.status = this.getStatus(process, daysSinceStepUpdate)
     process.daysSinceStepUpdate = daysSinceStepUpdate
+    process.incarcerationDaysCount = incarcerationDaysCount
     return process
   }
 
@@ -110,5 +120,9 @@ export class ProcessService {
       process.status = ProcessStatusTypeEnum.Danger
     }
     return process.status
+  }
+
+  toDate(dateString: Date | string | undefined): Date {
+    return dateString ? new Date(dateString) : new Date()
   }
 }
