@@ -32,6 +32,8 @@ export const SProcess = z.object({
   defendantName: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   dateStepUpdate: z.date(),
+  incarcerationDate: z.date(),
+  incarcerationDaysCount: z.number(),
   daysSinceStepUpdate: z.number().int().default(0),
 })
 export type IProcess = z.infer<typeof SProcess>
