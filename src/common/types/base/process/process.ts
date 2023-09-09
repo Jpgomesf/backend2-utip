@@ -5,8 +5,8 @@ export enum ProcessStepsTypeEnum {
   MinisterioPublico = 'ministerio-publico',
   ApresentacaoDefesa = 'apresentacao-defesa',
   AudienciaInqueritoJudicial = 'aij',
-  MemoriasDefesa = 'memorias-defesa',
-  MemoriasMinisterioPublico = 'memorias-ministerio-publico',
+  MemoriaisDefesa = 'memoriais-defesa',
+  MemoriaisMinisterioPublico = 'memoriais-ministerio-publico',
   Sentenca = 'sentenca',
   Finalizado = 'finalizado',
 }
@@ -33,7 +33,7 @@ export const SProcess = z.object({
   description: z.string().optional().nullable(),
   dateStepUpdate: z.date(),
   incarcerationDate: z.date(),
-  incarcerationDaysCount: z.number(),
+  incarcerationDaysCount: z.number().optional(),
   daysSinceStepUpdate: z.number().int().default(0),
 })
 export type IProcess = z.infer<typeof SProcess>

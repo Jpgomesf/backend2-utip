@@ -102,8 +102,8 @@ export class ProcessService {
       [ProcessStepsTypeEnum.MinisterioPublico]: [5, 7],
       [ProcessStepsTypeEnum.ApresentacaoDefesa]: [30, 40],
       [ProcessStepsTypeEnum.AudienciaInqueritoJudicial]: [30, 45],
-      [ProcessStepsTypeEnum.MemoriasDefesa]: [5, 7],
-      [ProcessStepsTypeEnum.MemoriasMinisterioPublico]: [5, 7],
+      [ProcessStepsTypeEnum.MemoriaisDefesa]: [5, 7],
+      [ProcessStepsTypeEnum.MemoriaisMinisterioPublico]: [5, 7],
       [ProcessStepsTypeEnum.Sentenca]: [10, 15],
       [ProcessStepsTypeEnum.Finalizado]: [Infinity, Infinity],
     }
