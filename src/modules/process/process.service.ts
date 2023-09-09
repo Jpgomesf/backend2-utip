@@ -21,7 +21,7 @@ export class ProcessService {
   }
 
   async findAll(): Promise<IProcess[]> {
-    const processes = await this.processModel.find().exec()
+    const processes = await this.processModel.find().lean().exec()
     return processes.map((process) => this.formatProcess(process))
   }
 
@@ -34,7 +34,7 @@ export class ProcessService {
       [ProcessStatusTypeEnum.Delivered]: 0,
     }
 
-    const processes = await this.processModel.find().exec()
+    const processes = await this.processModel.find().lean().exec()
     const formatedProcess = processes.map((process) =>
       this.formatProcess(process),
     )
