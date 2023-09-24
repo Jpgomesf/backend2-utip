@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import z from 'zod'
 
 export enum ProcessStepsTypeEnum {
   Delegacia = 'delegacia',
@@ -24,8 +24,15 @@ export enum ProcessStatusTypeEnum {
   Delivered = 'delivered',
 }
 
+export const SStepsHistory = z.object({
+  step: z.nativeEnum(ProcessStepsTypeEnum),
+  startDate: z.coerce.date().nullable().default(null),
+  finalDate: z.coerce.date().nullable().default(null),
+})
+export type IStepsHistory = z.infer<typeof SStepsHistory>
+
 export const SProcess = z.object({
-  steps: z.nativeEnum(ProcessStepsTypeEnum),
+  stepsHistory: SStepsHistory.array(),
   status: z.nativeEnum(ProcessStatusTypeEnum).default(ProcessStatusTypeEnum.Ok),
   processNumber: z.string().max(30),
   attorneyType: z.nativeEnum(ProcessAttorneyTypeEnum),
