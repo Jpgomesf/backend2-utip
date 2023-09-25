@@ -82,7 +82,7 @@ export class ProcessService {
             updateProcessDto.stepsHistory.length - 1
           ].startDate
         updateProcessDto.dateStepUpdate = this.toDate(startDate)
-        previousStep.finalDate = new Date()
+        previousStep.finalDate = this.toDate(startDate)
         currentStep.startDate = this.toDate(startDate)
       } else {
         previousStep.finalDate = new Date()
