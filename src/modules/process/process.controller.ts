@@ -30,6 +30,12 @@ export class ProcessController {
       ...process,
       dateStepUpdate: this.processService.toDate(process.dateStepUpdate),
       incarcerationDate: this.processService.toDate(process.dateStepUpdate),
+      stepsHistory: [
+        {
+          ...process.stepsHistory[0],
+          startDate: this.processService.toDate(process.dateStepUpdate),
+        },
+      ],
     }
     try {
       const validatedProcess = SProcess.parse(newProcess)
