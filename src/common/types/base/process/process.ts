@@ -28,6 +28,8 @@ export const SStepsHistory = z.object({
   step: z.nativeEnum(ProcessStepsTypeEnum),
   startDate: z.coerce.date().nullable().default(null),
   finalDate: z.coerce.date().nullable().default(null),
+  phaseDaysCounter: z.number().optional(),
+  lastStatus: z.nativeEnum(ProcessStatusTypeEnum).optional(),
 })
 export type IStepsHistory = z.infer<typeof SStepsHistory>
 

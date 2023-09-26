@@ -38,7 +38,10 @@ export class ProcessService {
       [ProcessStatusTypeEnum.Delivered]: 0,
     }
 
-    const processes = await this.processModel.find().lean().exec()
+    const processes = await this.processModel
+      .find({ stepsHistory: { $exists: true } })
+      .lean()
+      .exec()
     const formatedProcess = processes.map((process) =>
       this.formatProcess(process),
     )
@@ -71,22 +74,33 @@ export class ProcessService {
     ) {
       const previousStep =
         updateProcessDto.stepsHistory[updateProcessDto.stepsHistory.length - 2]
+
       const currentStep =
         updateProcessDto.stepsHistory[updateProcessDto.stepsHistory.length - 1]
-      if (
+
+      const startDate =
         updateProcessDto.stepsHistory[updateProcessDto.stepsHistory.length - 1]
-          .startDate
-      ) {
-        const startDate =
-          updateProcessDto.stepsHistory[
-            updateProcessDto.stepsHistory.length - 1
-          ].startDate
-        updateProcessDto.dateStepUpdate = this.toDate(startDate)
-        previousStep.finalDate = this.toDate(startDate)
-        currentStep.startDate = this.toDate(startDate)
-      } else {
-        previousStep.finalDate = new Date()
-        currentStep.startDate = new Date()
+          .startDate || null
+
+      updateProcessDto.dateStepUpdate = this.toDate(startDate)
+
+      previousStep.finalDate = this.toDate(startDate)
+
+      previousStep.phaseDaysCounter = this.calculateDaysDifference(
+        process.dateStepUpdate,
+        updateProcessDto.dateStepUpdate,
+      )
+
+      previousStep.lastStatus = this.getStatus(
+        process,
+        previousStep.phaseDaysCounter,
+      )
+      currentStep.startDate = this.toDate(startDate)
+
+      if (currentStep.step === ProcessStepsTypeEnum.Finalizado) {
+        currentStep.finalDate = this.toDate(startDate)
+        currentStep.lastStatus = ProcessStatusTypeEnum.Delivered
+        currentStep.phaseDaysCounter = null
       }
     }
 
@@ -102,18 +116,26 @@ export class ProcessService {
     return this.processModel.findByIdAndRemove(id).exec()
   }
 
-  calculateDaysDifference(date: Date): number {
-    return Math.round((Date.now() - date.getTime()) / (1000 * 3600 * 24))
+  calculateDaysDifference(date: Date, finalDate?: Date | null): number {
+    const endDate = finalDate || new Date()
+    return Math.round((endDate.getTime() - date.getTime()) / (1000 * 3600 * 24))
   }
 
   private formatProcess(process: IProcess) {
-    const daysSinceStepUpdate = this.calculateDaysDifference(
-      process.dateStepUpdate,
-    )
+    const daysSinceStepUpdate =
+      process.stepsHistory[process.stepsHistory.length - 1].step ===
+      ProcessStepsTypeEnum.Finalizado
+        ? null
+        : this.calculateDaysDifference(process.dateStepUpdate)
 
-    const incarcerationDaysCount = this.calculateDaysDifference(
-      process.incarcerationDate,
-    )
+    const incarcerationDaysCount =
+      process.stepsHistory[process.stepsHistory.length - 1].step ===
+      ProcessStepsTypeEnum.Finalizado
+        ? this.calculateDaysDifference(
+            process.incarcerationDate,
+            process.stepsHistory[process.stepsHistory.length - 1].finalDate,
+          )
+        : this.calculateDaysDifference(process.incarcerationDate)
 
     process.status = this.getStatus(process, daysSinceStepUpdate)
     process.daysSinceStepUpdate = daysSinceStepUpdate

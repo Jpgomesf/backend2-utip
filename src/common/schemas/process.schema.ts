@@ -18,6 +18,12 @@ export class StepsHistory implements IStepsHistory {
 
   @Prop({ type: Date })
   finalDate: IStepsHistory['finalDate']
+
+  @Prop({ type: Number })
+  phaseDaysCounter: IStepsHistory['phaseDaysCounter']
+
+  @Prop({ enum: ProcessStatusTypeEnum })
+  lastStatus: ProcessStatusTypeEnum
 }
 export const StepsHistorySchema = SchemaFactory.createForClass(StepsHistory)
 
