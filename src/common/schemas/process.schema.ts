@@ -4,12 +4,33 @@ import {
   ProcessStatusTypeEnum,
   ProcessStepsTypeEnum,
   ProcessAttorneyTypeEnum,
+  IProcess,
+  IStepsHistory,
 } from '../types'
 
+@Schema({ _id: false })
+export class StepsHistory implements IStepsHistory {
+  @Prop({ type: String, enum: ProcessStepsTypeEnum })
+  step: IStepsHistory['step']
+
+  @Prop({ type: Date })
+  startDate: IStepsHistory['startDate']
+
+  @Prop({ type: Date })
+  finalDate: IStepsHistory['finalDate']
+
+  @Prop({ type: Number })
+  phaseDaysCounter: IStepsHistory['phaseDaysCounter']
+
+  @Prop({ enum: ProcessStatusTypeEnum })
+  lastStatus: ProcessStatusTypeEnum
+}
+export const StepsHistorySchema = SchemaFactory.createForClass(StepsHistory)
+
 @Schema({ timestamps: true })
-export class Process extends Document {
-  @Prop({ required: true, enum: ProcessStepsTypeEnum })
-  steps: ProcessStepsTypeEnum
+export class Process extends Document implements IProcess {
+  @Prop({ type: [StepsHistorySchema] })
+  stepsHistory: IProcess['stepsHistory']
 
   @Prop({ enum: ProcessStatusTypeEnum })
   status: ProcessStatusTypeEnum
@@ -44,4 +65,3 @@ export class Process extends Document {
 }
 
 export const ProcessSchema = SchemaFactory.createForClass(Process)
-

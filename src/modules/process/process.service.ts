@@ -21,7 +21,11 @@ export class ProcessService {
   }
 
   async findAll(): Promise<IProcess[]> {
-    const processes = await this.processModel.find().lean().exec()
+    const processes = await this.processModel
+      .find({ stepsHistory: { $exists: true } })
+      .lean()
+      .exec()
+
     return processes.map((process) => this.formatProcess(process))
   }
 
@@ -34,7 +38,10 @@ export class ProcessService {
       [ProcessStatusTypeEnum.Delivered]: 0,
     }
 
-    const processes = await this.processModel.find().lean().exec()
+    const processes = await this.processModel
+      .find({ stepsHistory: { $exists: true } })
+      .lean()
+      .exec()
     const formatedProcess = processes.map((process) =>
       this.formatProcess(process),
     )
@@ -61,8 +68,40 @@ export class ProcessService {
   async update(id: string, updateProcessDto: IProcess) {
     const process = await this.processModel.findById(id).lean().exec()
 
-    if (updateProcessDto.steps && updateProcessDto.steps !== process.steps) {
-      updateProcessDto.dateStepUpdate = new Date()
+    if (
+      updateProcessDto.stepsHistory &&
+      updateProcessDto.stepsHistory.length !== process.stepsHistory.length
+    ) {
+      const previousStep =
+        updateProcessDto.stepsHistory[updateProcessDto.stepsHistory.length - 2]
+
+      const currentStep =
+        updateProcessDto.stepsHistory[updateProcessDto.stepsHistory.length - 1]
+
+      const startDate =
+        updateProcessDto.stepsHistory[updateProcessDto.stepsHistory.length - 1]
+          .startDate || null
+
+      updateProcessDto.dateStepUpdate = this.toDate(startDate)
+
+      previousStep.finalDate = this.toDate(startDate)
+
+      previousStep.phaseDaysCounter = this.calculateDaysDifference(
+        process.dateStepUpdate,
+        updateProcessDto.dateStepUpdate,
+      )
+
+      previousStep.lastStatus = this.getStatus(
+        process,
+        previousStep.phaseDaysCounter,
+      )
+      currentStep.startDate = this.toDate(startDate)
+
+      if (currentStep.step === ProcessStepsTypeEnum.Finalizado) {
+        currentStep.finalDate = this.toDate(startDate)
+        currentStep.lastStatus = ProcessStatusTypeEnum.Delivered
+        currentStep.phaseDaysCounter = null
+      }
     }
 
     const updatedProcess = await this.processModel
@@ -77,18 +116,26 @@ export class ProcessService {
     return this.processModel.findByIdAndRemove(id).exec()
   }
 
-  calculateDaysDifference(date: Date): number {
-    return Math.round((Date.now() - date.getTime()) / (1000 * 3600 * 24))
+  calculateDaysDifference(date: Date, finalDate?: Date | null): number {
+    const endDate = finalDate || new Date()
+    return Math.round((endDate.getTime() - date.getTime()) / (1000 * 3600 * 24))
   }
 
   private formatProcess(process: IProcess) {
-    const daysSinceStepUpdate = this.calculateDaysDifference(
-      process.dateStepUpdate,
-    )
+    const daysSinceStepUpdate =
+      process.stepsHistory[process.stepsHistory.length - 1].step ===
+      ProcessStepsTypeEnum.Finalizado
+        ? null
+        : this.calculateDaysDifference(process.dateStepUpdate)
 
-    const incarcerationDaysCount = this.calculateDaysDifference(
-      process.incarcerationDate,
-    )
+    const incarcerationDaysCount =
+      process.stepsHistory[process.stepsHistory.length - 1].step ===
+      ProcessStepsTypeEnum.Finalizado
+        ? this.calculateDaysDifference(
+            process.incarcerationDate,
+            process.stepsHistory[process.stepsHistory.length - 1].finalDate,
+          )
+        : this.calculateDaysDifference(process.incarcerationDate)
 
     process.status = this.getStatus(process, daysSinceStepUpdate)
     process.daysSinceStepUpdate = daysSinceStepUpdate
@@ -97,6 +144,8 @@ export class ProcessService {
   }
 
   private getStatus(process: IProcess, daysSinceStepUpdated: number) {
+    const lastStep =
+      process.stepsHistory?.[process.stepsHistory?.length - 1].step
     const thresholds = {
       [ProcessStepsTypeEnum.Delegacia]: [10, 15],
       [ProcessStepsTypeEnum.MinisterioPublico]: [5, 7],
@@ -108,9 +157,9 @@ export class ProcessService {
       [ProcessStepsTypeEnum.Finalizado]: [Infinity, Infinity],
     }
 
-    const [okThreshold, warningThreshold] = thresholds[process.steps]
+    const [okThreshold, warningThreshold] = thresholds[lastStep]
 
-    if (process.steps === ProcessStepsTypeEnum.Finalizado) {
+    if (lastStep === ProcessStepsTypeEnum.Finalizado) {
       return ProcessStatusTypeEnum.Delivered
     } else if (daysSinceStepUpdated <= okThreshold) {
       process.status = ProcessStatusTypeEnum.Ok

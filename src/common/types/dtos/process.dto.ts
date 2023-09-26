@@ -9,4 +9,3 @@ export const DSProcess = SProcess.omit({
   incarcerationDate: true,
 })
 export type DIProcess = z.infer<typeof DSProcess>
-
