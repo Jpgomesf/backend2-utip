@@ -150,6 +150,7 @@ export class ProcessService {
       [ProcessStepsTypeEnum.Delegacia]: [10, 15],
       [ProcessStepsTypeEnum.MinisterioPublico]: [5, 7],
       [ProcessStepsTypeEnum.ApresentacaoDefesa]: [30, 40],
+      [ProcessStepsTypeEnum.ImpugnacaoMP]: [5, 7],
       [ProcessStepsTypeEnum.AudienciaInqueritoJudicial]: [30, 45],
       [ProcessStepsTypeEnum.MemoriaisDefesa]: [5, 7],
       [ProcessStepsTypeEnum.MemoriaisMinisterioPublico]: [5, 7],
