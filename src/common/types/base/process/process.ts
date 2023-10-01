@@ -4,6 +4,7 @@ export enum ProcessStepsTypeEnum {
   Delegacia = 'delegacia',
   MinisterioPublico = 'ministerio-publico',
   ApresentacaoDefesa = 'apresentacao-defesa',
+  ImpugnacaoMP = 'impugnação-mp',
   AudienciaInqueritoJudicial = 'aij',
   MemoriaisDefesa = 'memoriais-defesa',
   MemoriaisMinisterioPublico = 'memoriais-ministerio-publico',
