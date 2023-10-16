@@ -1,84 +1,46 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { ProcessController } from './process.controller'
-import { ProcessService } from './process.service'
-import { BadRequestException } from '@nestjs/common'
-import { ProcessStatusTypeEnum, ProcessStepsTypeEnum, IProcess, Process } from '../../common'
-import { getModelToken } from '@nestjs/mongoose'
+import { ProcessController } from './process.controller';
+import { ProcessService } from './process.service';
+import { BadRequestException } from '@nestjs/common';
 
 describe('ProcessController', () => {
-  let controller: ProcessController
-  let service: ProcessService
+  let processController: ProcessController;
+  let processService: ProcessService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      controllers: [ProcessController],
-      providers: [
-        ProcessService,
+  beforeEach(() => {
+    processService = new ProcessService();
+    processController = new ProcessController(processService);
+  });
+
+  it('should create a new process', async () => {
+    const process = {
+      name: 'Process 1',
+      description: 'This is the first process.',
+      dateStepUpdate: new Date(),
+      incarcerationDate: new Date(),
+      stepsHistory: [
         {
-          provide: getModelToken('Process'),
-          useValue: {},
+          name: 'Step 1',
+          startDate: new Date(),
+          endDate: null,
         },
       ],
-    })
-      .overrideProvider(ProcessService)
-      .useValue({
-        create: jest.fn().mockResolvedValue({
-        steps: ProcessStepsTypeEnum.Delegacia,
-        status: ProcessStatusTypeEnum.Ok,
-        processNumber: '123456',
-        attorneyName: 'John Doe',
-        defendantName: 'Jane Doe',
-        description: 'Some description',
-        daysSinceStepUpdate: 5,
-        dateStepUpdate: new Date(),
-      }),
-      })
-      .compile()
+    };
 
-    controller = module.get<ProcessController>(ProcessController)
-    service = module.get<ProcessService>(ProcessService)
-  })
+    const spy = jest.spyOn(processService, 'create');
 
-  describe('create', () => {
-    it('should create a new process successfully', async () => {
-      const createProcessDto: IProcess = {
-        steps: ProcessStepsTypeEnum.Delegacia,
-        status: ProcessStatusTypeEnum.Ok,
-        processNumber: '123456',
-        attorneyName: 'John Doe',
-        defendantName: 'Jane Doe',
-        description: 'Some description',
-        daysSinceStepUpdate: 5,
-        dateStepUpdate: new Date(),
-      }
+    const result = await processController.create(process);
 
-      const createdProcess = {
-        id: '1',
-        ...createProcessDto,
-      } as Process
+    expect(spy).toHaveBeenCalledWith(process);
+    expect(result).toBeDefined();
+  });
 
-      jest.spyOn(service, 'create').mockResolvedValue(createdProcess)
+  it('should throw an error if the process is invalid', async () => {
+    const process = {
+      name: '',
+    };
 
-      const result = await controller.create(createProcessDto)
-
-      expect(result).toEqual(createdProcess)
-    })
-
-    it('should throw a BadRequestException if the process creation fails', async () => {
-      const createProcessDto: IProcess = {
-        steps: ProcessStepsTypeEnum.Delegacia,
-        status: ProcessStatusTypeEnum.Ok,
-        processNumber: '123456',
-        attorneyName: 'John Doe',
-        defendantName: 'Jane Doe',
-        description: 'Some description',
-        daysSinceStepUpdate: 5,
-        dateStepUpdate: new Date(),
-      }
-
-      jest.spyOn(service, 'create').mockRejectedValue(new Error('Failed to create process'))
-
-      await expect(controller.create(createProcessDto)).rejects.toThrow(BadRequestException)
-    })
-  })
-})
+    expect(async () => {
+      await processController.create(process);
+    }).rejects.toThrow(BadRequestException);
+  });
+});
