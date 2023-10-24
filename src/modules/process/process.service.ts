@@ -149,7 +149,8 @@ export class ProcessService {
     const thresholds = {
       [ProcessStepsTypeEnum.Delegacia]: [10, 15],
       [ProcessStepsTypeEnum.MinisterioPublico]: [5, 7],
-      [ProcessStepsTypeEnum.ApresentacaoDefesa]: [30, 40],
+      [ProcessStepsTypeEnum.Citacao]: [5, 8],
+      [ProcessStepsTypeEnum.ApresentacaoDefesa]: [20, 30],
       [ProcessStepsTypeEnum.ImpugnacaoMP]: [5, 7],
       [ProcessStepsTypeEnum.AudienciaInqueritoJudicial]: [30, 45],
       [ProcessStepsTypeEnum.MemoriaisDefesa]: [5, 7],

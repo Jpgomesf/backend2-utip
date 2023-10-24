@@ -3,6 +3,7 @@ import z from 'zod'
 export enum ProcessStepsTypeEnum {
   Delegacia = 'delegacia',
   MinisterioPublico = 'ministerio-publico',
+  Citacao = 'citação',
   ApresentacaoDefesa = 'apresentacao-defesa',
   ImpugnacaoMP = 'impugnação-mp',
   AudienciaInqueritoJudicial = 'aij',
