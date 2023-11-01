@@ -2,13 +2,21 @@ import z from 'zod'
 
 export enum ProcessStepsTypeEnum {
   Delegacia = 'delegacia',
+  AtosSecretariaI = 'atos-da-secretaria-I',
   MinisterioPublico = 'ministerio-publico',
+  AtosSecretariaII = 'atos-da-secretaria-II',
   Citacao = 'citação',
+  AtosSecretariaIII = 'atos-da-secretaria-III',
   ApresentacaoDefesa = 'apresentacao-defesa',
+  AtosSecretariaIV = 'atos-da-secretaria-IV',
   ImpugnacaoMP = 'impugnação-mp',
+  AtosSecretariaV = 'atos-da-secretaria-V',
   AudienciaInqueritoJudicial = 'aij',
+  AtosSecretariaVI = 'atos-da-secretaria-VI',
   MemoriaisDefesa = 'memoriais-defesa',
+  AtosSecretariaVII = 'atos-da-secretaria-VII',
   MemoriaisMinisterioPublico = 'memoriais-ministerio-publico',
+  AtosSecretariaVIII = 'atos-da-secretaria-VIII',
   Sentenca = 'sentenca',
   Finalizado = 'finalizado',
 }
