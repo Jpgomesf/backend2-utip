@@ -148,13 +148,21 @@ export class ProcessService {
       process.stepsHistory?.[process.stepsHistory?.length - 1].step
     const thresholds = {
       [ProcessStepsTypeEnum.Delegacia]: [10, 15],
+      [ProcessStepsTypeEnum.AtosSecretariaI]: [1, 3],
       [ProcessStepsTypeEnum.MinisterioPublico]: [5, 7],
-      [ProcessStepsTypeEnum.Citacao]: [5, 8],
+      [ProcessStepsTypeEnum.AtosSecretariaII]: [1, 3],
+      [ProcessStepsTypeEnum.Citacao]: [5, 7],
+      [ProcessStepsTypeEnum.AtosSecretariaIII]: [1, 3],
       [ProcessStepsTypeEnum.ApresentacaoDefesa]: [20, 30],
+      [ProcessStepsTypeEnum.AtosSecretariaIV]: [1, 3],
       [ProcessStepsTypeEnum.ImpugnacaoMP]: [5, 7],
+      [ProcessStepsTypeEnum.AtosSecretariaV]: [1, 3],
       [ProcessStepsTypeEnum.AudienciaInqueritoJudicial]: [30, 45],
-      [ProcessStepsTypeEnum.MemoriaisDefesa]: [5, 7],
+      [ProcessStepsTypeEnum.AtosSecretariaVI]: [1, 3],
+      [ProcessStepsTypeEnum.MemoriaisDefesa]: [10, 15],
+      [ProcessStepsTypeEnum.AtosSecretariaVII]: [1, 3],
       [ProcessStepsTypeEnum.MemoriaisMinisterioPublico]: [5, 7],
+      [ProcessStepsTypeEnum.AtosSecretariaVIII]: [1, 3],
       [ProcessStepsTypeEnum.Sentenca]: [10, 15],
       [ProcessStepsTypeEnum.Finalizado]: [Infinity, Infinity],
     }
