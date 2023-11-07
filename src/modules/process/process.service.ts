@@ -7,6 +7,7 @@ import {
   ProcessStepsTypeEnum,
   ProcessStatusTypeEnum,
   IProcessAnalitycs,
+  ProcessAttorneyTypeEnum,
 } from '../../common'
 
 @Injectable()
@@ -144,6 +145,8 @@ export class ProcessService {
   }
 
   private getStatus(process: IProcess, daysSinceStepUpdated: number) {
+    const isPrivateAtorney =
+      process.attorneyType === ProcessAttorneyTypeEnum.Private
     const lastStep =
       process.stepsHistory?.[process.stepsHistory?.length - 1].step
     const thresholds = {
@@ -153,13 +156,17 @@ export class ProcessService {
       [ProcessStepsTypeEnum.AtosSecretariaII]: [1, 3],
       [ProcessStepsTypeEnum.Citacao]: [5, 7],
       [ProcessStepsTypeEnum.AtosSecretariaIII]: [1, 3],
-      [ProcessStepsTypeEnum.ApresentacaoDefesa]: [20, 30],
+      [ProcessStepsTypeEnum.ApresentacaoDefesa]: isPrivateAtorney
+        ? [10, 15]
+        : [20, 30],
       [ProcessStepsTypeEnum.AtosSecretariaIV]: [1, 3],
       [ProcessStepsTypeEnum.ImpugnacaoMP]: [5, 7],
       [ProcessStepsTypeEnum.AtosSecretariaV]: [1, 3],
       [ProcessStepsTypeEnum.AudienciaInqueritoJudicial]: [30, 45],
       [ProcessStepsTypeEnum.AtosSecretariaVI]: [1, 3],
-      [ProcessStepsTypeEnum.MemoriaisDefesa]: [10, 15],
+      [ProcessStepsTypeEnum.MemoriaisDefesa]: isPrivateAtorney
+        ? [5, 7]
+        : [10, 15],
       [ProcessStepsTypeEnum.AtosSecretariaVII]: [1, 3],
       [ProcessStepsTypeEnum.MemoriaisMinisterioPublico]: [5, 7],
       [ProcessStepsTypeEnum.AtosSecretariaVIII]: [1, 3],
