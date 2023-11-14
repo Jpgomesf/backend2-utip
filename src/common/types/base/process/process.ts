@@ -5,6 +5,7 @@ export enum ProcessStepsTypeEnum {
   AtosSecretariaI = 'atos-da-secretaria-I',
   MinisterioPublico = 'ministerio-publico',
   AtosSecretariaII = 'atos-da-secretaria-II',
+  RecebimentoDenuncia = 'recebimento-denuncia',
   Citacao = 'citação',
   AtosSecretariaIII = 'atos-da-secretaria-III',
   ApresentacaoDefesa = 'apresentacao-defesa',

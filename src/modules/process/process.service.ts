@@ -154,6 +154,7 @@ export class ProcessService {
       [ProcessStepsTypeEnum.AtosSecretariaI]: [1, 3],
       [ProcessStepsTypeEnum.MinisterioPublico]: [5, 7],
       [ProcessStepsTypeEnum.AtosSecretariaII]: [1, 3],
+      [ProcessStepsTypeEnum.RecebimentoDenuncia]: [1, 2],
       [ProcessStepsTypeEnum.Citacao]: [5, 7],
       [ProcessStepsTypeEnum.AtosSecretariaIII]: [1, 3],
       [ProcessStepsTypeEnum.ApresentacaoDefesa]: isPrivateAtorney
