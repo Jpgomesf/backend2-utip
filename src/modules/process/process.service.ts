@@ -62,7 +62,7 @@ export class ProcessService {
   }
 
   async findOne(id: string): Promise<IProcess> {
-    const process = await this.processModel.findById(id).exec()
+    const process = await this.processModel.findById(id).lean().exec()
     return this.formatProcess(process)
   }
 
