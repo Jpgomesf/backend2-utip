@@ -5,8 +5,11 @@ import { AppModule } from './modules/app/app.module'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
   app.enableCors({
-    origin: true,
-  })
+    origin: '*', // Adjust according to your needs
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  });
   const config = new DocumentBuilder()
     .setTitle('backend-utip')
     .setDescription('The utip API description')
