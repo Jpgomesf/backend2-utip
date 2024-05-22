@@ -1,15 +1,9 @@
 import { NestFactory } from '@nestjs/core'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './modules/app/app.module'
-import { ExpressAdapter } from '@nestjs/platform-express';
-import * as express from 'express';
-import * as serverless from 'serverless-http';
-
-const expressApp = express();
-const adapter = new ExpressAdapter(expressApp);
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, adapter)
+  const app = await NestFactory.create(AppModule)
   app.enableCors()
   const config = new DocumentBuilder()
     .setTitle('backend-utip')
@@ -23,5 +17,3 @@ async function bootstrap() {
   await app.listen(3000)
 }
 bootstrap()
-
-module.exports.handler = serverless(expressApp);

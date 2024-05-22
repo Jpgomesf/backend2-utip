@@ -2,14 +2,20 @@
   "version": 2,
   "builds": [
     {
-      "src": "lambda.ts",
+      "src": "src/main.ts",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/lambda.ts"
+      "dest": "src/main.ts",
+      "methods":[
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+      ]
     }
   ]
 }
