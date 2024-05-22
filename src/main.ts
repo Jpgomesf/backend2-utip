@@ -8,7 +8,13 @@ async function bootstrap() {
     origin: '*', // Adjust according to your needs
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 204,
+    credentials: true,
+    allowedHeaders: [
+      'Accepted',
+      'Content-Type',
+      'Authorization',
+    ]
   });
   const config = new DocumentBuilder()
     .setTitle('backend-utip')
