@@ -4,7 +4,9 @@ import { AppModule } from './modules/app/app.module'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  app.enableCors()
+  app.enableCors({
+    origin: true,
+  })
   const config = new DocumentBuilder()
     .setTitle('backend-utip')
     .setDescription('The utip API description')
